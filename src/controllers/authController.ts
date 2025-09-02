@@ -12,7 +12,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
             res.status(400).json({ success: false, message: 'Email already registered' });
             return;
         }
-
+        console.log("hashing password");
         const hashedPassword = await hashPassword(password);
         const user = new User({
             name,
@@ -20,11 +20,14 @@ export const register = async (req: Request, res: Response): Promise<void> => {
             password: hashedPassword,
             number
         });
-
+        
+        console.log("after hashing password");
         await user.save();
-
+        console.log("after save");
+        
         const token = generateToken({ userId: user._id });
-
+        
+        console.log("end before 201");
         res.status(201).json({
             success: true,
             message: 'Registration successful',
@@ -40,6 +43,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
             }
         });
     } catch (error) {
+        console.error("❌ Error in register route:", error);
         res.status(500).json({ success: false, message: 'Failed to update progress' });
     }
 };
@@ -71,7 +75,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
                     name: user.name,
                     email: user.email,
                     number: user.number,
-                    role: user.role
+                    // role: user.role
                 },
                 token
             }
